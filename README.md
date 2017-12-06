@@ -1,2 +1,114 @@
-# fhirstorm
-SMART on FHIR for Python
+# FHIRstorm
+
+## SMART on FHIR for Python
+
+## Getting started
+
+### Obtain FHIRstorm:
+
+```
+pip install fhirstorm
+```
+
+### Obtain app credentials from a SMART on FHIR installation:
+
+You can get free sandbox credentials from one of the following:
+
+[SMART on FHIR SmartHealthIT Sandbox][smarthealthit]
+[Open Epic][epic]
+[Cerner Millenium][cerner]
+[Allscripts][allscripts]
+
+[smarthealthit]: http://docs.smarthealthit.org/
+[epic]: https://open.epic.com/
+[cerner]: http://fhir.cerner.com/millennium/dstu2/
+[allscripts]: https://developer.allscripts.com/
+
+You'll need to be ready with a `redirect_url` when you sign up (this
+is where you'll receive the OAuth2 callback that gives you a code that
+you'll exchange for an authorization token.)
+
+### Obtain an authorization code
+
+```
+import os
+from fhirstorm import Connection, auth
+
+# Replace with the service root of your SMART on FHIR endpoint
+SERVICE_ROOT = 'https://sb-fhir-stu3.smarthealthit.org/smartstu3/data'
+CLIENT_ID = '<you get this when you register your app>'
+REDIRECT_URI = '<YOUR OWN url, to which the FHIR endpoint will redirect the user>'
+CLIENT_SECRET = '<you *might* get one of these when you register your app>'
+INTERNAL_SECRET = 'itsaseekrit' # please do better than this
+
+# You need this if you used a `http://localhost...` redirect url
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
+
+conn = Connection(SERVICE_ROOT)
+
+# Get the particular REST endpoint (there's usually just the one)
+service = conn.metadata.rest[0]
+
+# Get your authorization url
+authorization_url, state = auth.authorization_url(
+    service,
+    client_id=CLIENT_ID,
+    redirect_uri=REDIRECT_URI,
+    scope='profile openid offline_access launch/patient patient/*.*',
+    state=auth.jwt_state(INTERNAL_SECRET))
+```
+
+Now, sent the user to the URL you just got.
+They'll be redirected back to you redirect_uri after they log in (sandbox
+credentials are different for each of the sandboxes; consult their documentation
+for the correct credentials to use when logging in)
+
+### Obtain an authorization token
+
+Once you have received the callback, use the *whole URL* you received (it should include
+a state and code parameter, at a minimum):
+
+```
+# Assuming you've stored the actual redirect URL received into authorization response...
+
+tok = auth.fetch_token(
+    service, CLIENT_ID, REDIRECT_URI,
+    authorization_response,
+    client_secret=CLIENT_SECRET,        # if you have one, otherwise leave it off
+    state_validator=lambda state: auth.jwt_state_validator(INTERNAL_SECRET))
+```
+
+Now you can use this token to access the various FHIR resources. Save it somewhere safe.
+
+```
+conn = Connection(
+    SERVICE_ROOT,
+    session=OAuth2Session(
+        client_id=CLIENT_ID, token=token))
+
+service = connection.metadata.rest[0]
+```
+
+In many of the implementations, you'll get the patient ID right in the token. Sometimes, it
+comes (in JWT form!) inside the encoded access token:
+
+```
+improt jwt
+
+patient_id = token.get('patient')
+if patient_id is None:
+    decoded = jwt.decode(token['access_token'], verify=False)
+    patient_id = decoderd.get('local_patient_id')
+```
+
+Once you've been authorized, though, you can get resources off the `service.r` object:
+
+```
+# Fetch the patient
+p = service.r.Patient.fetch(patient_id)
+
+# Get all medication orders for the patient
+res = service.r.MedicationOrder.search(dict(patient=p.id))
+
+```
+
