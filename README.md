@@ -39,7 +39,7 @@ you'll exchange for an authorization token.)
 
 ### Obtain an authorization code
 
-```
+```python
 import os
 from fhirstorm import Connection, auth
 
@@ -82,7 +82,7 @@ for the correct credentials to use when logging in)
 Once you have received the callback, use the *whole URL* you received (it should include
 a state and code parameter, at a minimum):
 
-```
+```python
 # Assuming you've stored the actual redirect URL received into authorization response...
 
 tok = auth.fetch_token(
@@ -102,7 +102,7 @@ tok = auth.fetch_token(
 
 Now you can use this token to access the various FHIR resources. Save it somewhere safe.
 
-```
+```python
 conn = Connection(
     SERVICE_ROOT,
     session=OAuth2Session(
@@ -114,8 +114,8 @@ service = connection.metadata.rest[0]
 In many of the implementations, you'll get the patient ID right in the token. Sometimes, it
 comes (in JWT form!) inside the encoded access token:
 
-```
-improt jwt
+```python
+import jwt
 
 patient_id = token.get('patient')
 if patient_id is None:
@@ -125,7 +125,7 @@ if patient_id is None:
 
 Once you've been authorized, though, you can get resources off the `service.r` object:
 
-```
+```python
 # Fetch the patient
 p = service.r.Patient.fetch(patient_id)
 
