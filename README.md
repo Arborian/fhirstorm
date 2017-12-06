@@ -2,6 +2,14 @@
 
 ## SMART on FHIR for Python
 
+You know, because SMART on FHIR is the name of the protocol
+
+... and Firestorm is a DC hero who's basically a really smart guy
+... who is on fire.
+
+Also, I couldn't easily find any puns having to do with intellgent snakes
+on fire.
+
 ## Getting started
 
 ### Obtain FHIRstorm:
