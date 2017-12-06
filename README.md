@@ -59,7 +59,12 @@ authorization_url, state = auth.authorization_url(
 ```
 
 Now, sent the user to the URL you just got.
-They'll be redirected back to you redirect_uri after they log in (sandbox
+Best practice is for you to also save the `state` variable somewhere safe, and
+verify that the identical state is passed back to you.
+In this example, however, I'll do the less-safe "verify that some valid signed
+JWT was passed back to you."
+
+The user will be redirected back to you redirect_uri after they log in (sandbox
 credentials are different for each of the sandboxes; consult their documentation
 for the correct credentials to use when logging in)
 
@@ -76,6 +81,14 @@ tok = auth.fetch_token(
     authorization_response,
     client_secret=CLIENT_SECRET,        # if you have one, otherwise leave it off
     state_validator=lambda state: auth.jwt_state_validator(INTERNAL_SECRET))
+
+# Or if you saved the state:
+tok = auth.fetch_token(
+    service, CLIENT_ID, REDIRECT_URI,
+    authorization_response,
+    client_secret=CLIENT_SECRET,        # if you have one, otherwise leave it off
+    state=STATE_VALUE_YOU_SAVED)
+
 ```
 
 Now you can use this token to access the various FHIR resources. Save it somewhere safe.
