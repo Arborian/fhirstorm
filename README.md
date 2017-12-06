@@ -8,7 +8,7 @@ You know, because SMART on FHIR is the name of the protocol
 
 ... who is on fire.
 
-Also, I couldn't easily find any puns having to do with intellgent snakes
+Also, I couldn't easily find any puns having to do with intelligent snakes
 on fire.
 
 ## Getting started
