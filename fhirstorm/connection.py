@@ -1,5 +1,5 @@
 import copy
-from barin.util import reify
+from .util import reify
 
 import requests
 from requests_oauthlib import OAuth2Session

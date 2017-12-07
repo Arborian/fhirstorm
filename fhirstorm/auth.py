@@ -10,16 +10,19 @@ log = logging.getLogger(__name__)
 
 def jwt_state(secret, expires_in=300, **claims):
     claims = dict(claims)
-    claims.setdefault('exp', datetime.utcnow() + timedelta(seconds=expires_in)),
+    claims.setdefault('exp', datetime.utcnow() + timedelta(seconds=expires_in))
     return jwt.encode(claims, secret)
 
 
-def jwt_state_validator(state, secret, **kwargs):
-    return jwt.decode(state, secret, **kwargs)
+def jwt_state_validator(secret, **kwargs):
+    def validator(state):
+        return jwt.decode(state, secret, **kwargs)
+    return validator
 
 
 def authorization_url(
-        service, client_id, redirect_uri, scope, state):
+        service, client_id, redirect_uri, scope, state,
+        launch=None):
     conn = service.bind.clone(
         session=OAuth2Session(
             client_id=client_id,
@@ -28,7 +31,8 @@ def authorization_url(
     return conn.session.authorization_url(
         service.security.oauth2_uris.authorize,
         aud=conn.service_root,
-        state=state)
+        state=state,
+        launch=launch)
 
 
 def fetch_token(
@@ -44,13 +48,9 @@ def fetch_token(
         session=OAuth2Session(
             client_id=client_id,
             redirect_uri=redirect_uri))
-    if client_secret:
-        auth = (client_id, client_secret)
-    else:
-        auth = None
     return conn.session.fetch_token(
         token_url=conn.metadata.rest[0].security.oauth2_uris.token,
         authorization_response=authorization_response,
+        client_id=client_id,
         client_secret=client_secret,
-        auth=auth,
         state=state)

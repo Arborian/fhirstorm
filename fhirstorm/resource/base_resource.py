@@ -32,7 +32,7 @@ class Resource(dict):
         return bind.get(f'/{cls.resourceType}/{id}')
 
     @classmethod
-    def register(cls, resourceType):
+    def register_resource(cls, resourceType):
         def decorator(subclass):
             subclass.resourceType = resourceType
             cls._registry[resourceType] = subclass

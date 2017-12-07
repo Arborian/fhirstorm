@@ -1,9 +1,9 @@
-from barin.util import reify
+from ..util import reify
 
 from .base_resource import Resource
 
 
-@Resource.register('Conformance')
+@Resource.register_resource('Conformance')
 class Conformance(Resource):
 
     @property
@@ -13,7 +13,7 @@ class Conformance(Resource):
             for it in self['rest']]
 
 
-@Resource.register('CapabilityStatement')
+@Resource.register_resource('CapabilityStatement')
 class CapabilityStatement(Resource):
 
     @property
