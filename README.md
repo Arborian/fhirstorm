@@ -136,3 +136,11 @@ res = service.r.MedicationOrder.search(dict(patient=p.id))
 
 ```
 
+### What next?
+
+Now that you've gotten started, you can check out the Jupyter Notebook [tutorials][tutorials] for more detail.
+
+Get FHIRing!
+
+[tutorials]: './notebooks'
+
