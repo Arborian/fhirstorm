@@ -142,5 +142,5 @@ Now that you've gotten started, you can check out the Jupyter Notebook [tutorial
 
 Get FHIRing!
 
-[tutorials]: './notebooks'
+[tutorials]: ./notebooks
 
