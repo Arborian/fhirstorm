@@ -22,6 +22,8 @@ def jwt_state_validator(secret, **kwargs):
 
 def authorization_url(
         service, client_id, redirect_uri, scope, state,
+        client_secret=None,
+        aud=None,
         launch=None):
     conn = service.bind.clone(
         session=OAuth2Session(
@@ -30,7 +32,8 @@ def authorization_url(
             scope=scope))
     return conn.session.authorization_url(
         service.security.oauth2_uris.authorize,
-        aud=conn.service_root,
+        client_secret=client_secret,
+        aud=aud,
         state=state,
         launch=launch)
 
@@ -49,7 +52,7 @@ def fetch_token(
             client_id=client_id,
             redirect_uri=redirect_uri))
     return conn.session.fetch_token(
-        token_url=conn.metadata.rest[0].security.oauth2_uris.token,
+        token_url=service.security.oauth2_uris.token,
         authorization_response=authorization_response,
         client_id=client_id,
         client_secret=client_secret,

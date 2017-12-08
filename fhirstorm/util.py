@@ -1,6 +1,17 @@
 from functools import update_wrapper
 
 
+class AttrProxy:
+
+    def __init__(self, obj, attr):
+        self._obj = obj
+        self._attr = attr
+
+    def __getattr__(self, name):
+        attr = getattr(self._obj, self._attr)
+        return getattr(attr, name)
+
+
 def reify(func):
     result = _Reified(func)
     update_wrapper(result, func)

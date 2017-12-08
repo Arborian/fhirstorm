@@ -3,9 +3,7 @@ from .util import reify
 
 import requests
 from requests_oauthlib import OAuth2Session
-
-from .resource import base_resource
-from .resource import conformance
+from .resource import Resource
 
 
 class Connection:
@@ -31,21 +29,19 @@ class Connection:
         url = self.service_root + '/metadata'
         resp = requests.get(url, headers={'Accept': 'application/json'})
         resp.raise_for_status()
-        return base_resource.Resource.from_dict(
-            resp.json(),
-            bind=self)
+        return resp.json()
 
-    @reify
-    def patient_id(self):
-        return self.session.token['patient']
+    def service(self, rest_id=0):
+        return Resource.from_dict(
+            self.metadata['rest'][rest_id],
+            resourceType='_Service',
+            bind=self)
 
     def get(self, path):
         url = self.service_root + path
         resp = self.session.get(url)
         resp.raise_for_status()
-        return base_resource.Resource.from_dict(
-            resp.json(),
-            bind=self)
+        return resp.json()
 
     def clone(self, **kwargs):
         result = copy.copy(self)

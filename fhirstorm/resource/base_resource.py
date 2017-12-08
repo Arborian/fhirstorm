@@ -23,13 +23,15 @@ class Resource(dict):
         if bind is None:
             bind = cls.metadata.get('bind')
         qs = urlencode(spec, doseq=True)
-        return bind.get(f'/{cls.resourceType}?{qs}')
+        resp = bind.get(f'/{cls.resourceType}?{qs}')
+        return cls.from_dict(resp, bind=bind)
 
     @classmethod
     def fetch(cls, id, bind=None):
         if bind is None:
             bind = cls.metadata.get('bind')
-        return bind.get(f'/{cls.resourceType}/{id}')
+        resp = bind.get(f'/{cls.resourceType}/{id}')
+        return cls.from_dict(resp, bind=bind)
 
     @classmethod
     def register_resource(cls, resourceType):
@@ -45,7 +47,7 @@ class Resource(dict):
         if result is not None:
             return result
         result = cls._registry[name] = type(
-            name, (cls,),
+            name, (Resource,),
             {'resourceType': name, 'metadata': metadata})
         return result
 

@@ -62,12 +62,14 @@ service = conn.metadata.rest[0]
 authorization_url, state = auth.authorization_url(
     service,
     client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET,
     redirect_uri=REDIRECT_URI,
     scope='profile openid offline_access launch/patient patient/*.*',
-    state=auth.jwt_state(INTERNAL_SECRET))
+    state=auth.jwt_state(INTERNAL_SECRET),
+    aud=SERVICE_ROOT)
 ```
 
-Now, sent the user to the URL you just got.
+Now, send the user to the URL you just got.
 Best practice is for you to also save the `state` variable somewhere safe, and
 verify that the identical state is passed back to you.
 In this example, however, I'll do the less-safe "verify that some valid signed
@@ -89,7 +91,7 @@ tok = auth.fetch_token(
     service, CLIENT_ID, REDIRECT_URI,
     authorization_response,
     client_secret=CLIENT_SECRET,        # if you have one, otherwise leave it off
-    state_validator=lambda state: auth.jwt_state_validator(INTERNAL_SECRET))
+    state_validator=auth.jwt_state_validator(INTERNAL_SECRET))
 
 # Or if you saved the state:
 tok = auth.fetch_token(
