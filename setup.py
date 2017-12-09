@@ -8,6 +8,7 @@ setup(
     setup_requires=['setuptools-git-version'],
     description='SMART on FHIR client for Python',
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.6",
