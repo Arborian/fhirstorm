@@ -24,11 +24,13 @@ pip install fhirstorm
 You can get free sandbox credentials from one of the following:
 
 - [SMART on FHIR SmartHealthIT Sandbox][smarthealthit]
+- [Healthcare Services Platform Consortium Sandbox][hspc]
 - [Open Epic][epic]
 - [Cerner Millenium][cerner]
 - [Allscripts][allscripts]
 
 [smarthealthit]: http://docs.smarthealthit.org/
+[hspc]: https://sandbox.hspconsortium.org/
 [epic]: https://open.epic.com/
 [cerner]: http://fhir.cerner.com/millennium/dstu2/
 [allscripts]: https://developer.allscripts.com/
