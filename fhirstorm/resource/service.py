@@ -5,15 +5,25 @@ from ..util import AttrProxy
 
 @Resource.register_resource('_Service')
 class Service(Resource):
-    _registry = {}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._registry = {}
         self.r = ResourceCollection(self)
 
     @property
     def security(self):
         return Security(self['security'], _bind=self.bind)
+
+    def resourceClass(self, name, **metadata):
+        result = self._registry.get(name)
+        if result is not None:
+            return result
+        base_cls = Resource.resourceClass(name)
+        result = self._registry[name] = type(
+            name, (base_cls,), {'metadata': metadata})
+        return result
+
 
     def refresh_token(self):
         if self.bind.client_secret:

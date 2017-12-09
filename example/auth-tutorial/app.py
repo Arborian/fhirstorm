@@ -1,10 +1,13 @@
 import os
+import pkg_resources
 from flask import Flask, request, redirect, jsonify, url_for, abort
 from fhirstorm import Connection, auth
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
 app = Flask(__name__)
-app.config.from_pyfile('../example/auth-tutorial/config.py')
+app.config.from_pyfile(
+    pkg_resources.resource_filename(
+        'fhirstorm', '../example/auth-tutorial/config.py'))
 
 
 @app.route('/launch')
@@ -47,4 +50,3 @@ def callback():
     print(token)
     ACCESS_TOKEN = token
     return jsonify(token)
-
