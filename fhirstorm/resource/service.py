@@ -36,24 +36,20 @@ class Service(Resource):
         return new_token
 
 
-class ResourceCollection:
+class ResourceCollection(dict):
 
     def __init__(self, service):
+        super().__init__({
+            res['type']: service.resourceClass(
+                res['type'], bind=service.bind, **res)
+            for res in service.resource})
         self._service = service
-        self._resourceTypes = [
-            res['type'] for res in self._service.resource]
-        for res in self._service.resource:
-            setattr(self, res['type'], self._service.resourceClass(
-                res['type'],
-                bind=AttrProxy(self._service, 'bind'),
-                **res))
 
-    def __iter__(self):
-        return iter(self._resourceTypes)
-
-    def items(self):
-        return (
-            (t, getattr(self, t)) for t in self)
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError(name)
 
     def __dir__(self):
         return list(self)

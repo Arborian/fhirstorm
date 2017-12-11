@@ -62,7 +62,9 @@ class Resource(dict):
         return resourceClass(dct, _bind=bind)
 
     def resolve(self):
-        return self.bind.get(f'/{self.reference}')
+        return self.from_dict(
+            self.bind.get(f'/{self.reference}'),
+            bind=self.bind)
 
     def __dir__(self):
         return [*super().__dir__(), *self.keys()]

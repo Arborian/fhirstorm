@@ -40,7 +40,8 @@ def authorization_url(
 
 def fetch_token(
         service, client_id, redirect_uri,
-        authorization_response,
+        code=None,
+        authorization_response=None,
         client_secret=None,
         state=None,
         state_validator=None):
@@ -53,6 +54,7 @@ def fetch_token(
             redirect_uri=redirect_uri))
     return conn.session.fetch_token(
         token_url=service.security.oauth2_uris.token,
+        code=code,
         authorization_response=authorization_response,
         client_id=client_id,
         client_secret=client_secret,
